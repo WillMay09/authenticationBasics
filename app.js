@@ -6,7 +6,15 @@ const {Pool} = require('pg');
 const session = require('express-session');
 const passport = require("passport");
 const LocalStrategy = require('passport-local').Strategy;
+
 const path = require('path');
+
+//authentication
+
+
+
+
+
 
 const pool = new Pool({
 
@@ -28,7 +36,7 @@ app.set("view engine", "ejs");
 
 app.use(session({secret: "cats", resave: false, saveUninitialized: false}));
 app.use(passport.session());
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({extended:false}));//parses form encoded data to body to be used
 
 
 
@@ -36,10 +44,27 @@ app.use(express.urlencoded({extended:false}));
 
 
 //routes
-app.use('/',(req, res)=>{
+app.get('/',(req, res)=>{
 
     res.render("index");
 
+});
+
+app.get("/sign-up", (req,res)=>{
+    res.render("sign-up-form")
+});
+
+app.post("/sign-up", async(req, res, next)=>{
+
+    try{
+        await pool.query("INSERT INTO users(username, password) VALUES ($1, $2)",
+        [req.body.username,req.body.password,]);
+        res.redirect("/");
+
+    }catch(err){
+
+        return next(err);
+    }
 });
 
 
