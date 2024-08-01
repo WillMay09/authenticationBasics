@@ -85,7 +85,7 @@ app.use(express.urlencoded({extended:false}));//parses form encoded data to body
 //routes
 app.get('/',(req, res)=>{
 
-    res.render("index");
+    res.render("index", {user: req.user});
 
 });
 
@@ -114,6 +114,15 @@ app.post(
       failureRedirect: "/"
     })
   );
+
+  app.get("/log-out", (req, res, next) => {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      res.redirect("/");
+    });
+  });
 
 
 
